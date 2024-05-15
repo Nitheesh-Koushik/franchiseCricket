@@ -22,7 +22,7 @@ def getNewsarticles(apiKey, league, days):
        f'from={lastDayStr}&'
        f'to={today}'
        'language=en&'
-       'sortBy=relevancy&'
+       'sortBy=popularity&'
        f'apiKey={apiKey}')
     response = requests.get(url)
     articles = response.json()["articles"]
@@ -31,7 +31,6 @@ def getNewsarticles(apiKey, league, days):
     df['publishedAt'] = pd.to_datetime(df['publishedAt'])
     df = df[~df["urlToImage"].isna()]
     df["League"] = league
-    df.sort_values(by = "publishedAt", ascending=False, inplace= True)
 
     return df
 
@@ -59,9 +58,9 @@ if __name__ == "__main__":
                "Sri Lanka Premier League", "New Zealand Super Smash", "Caribbean Premier League", ]
     for i, league in enumerate(leagues):
         if i == 0:
-            masterDF = getNewsarticles(newsAPI, league, 30)
+            masterDF = getNewsarticles(newsAPI, league, 15)
         else:
-            articles = getNewsarticles(newsAPI, league, 30)
+            articles = getNewsarticles(newsAPI, league, 15)
             masterDF = pd.concat([masterDF, articles],ignore_index= True)
-
+    masterDF.to_csv("master.csv")
     loadData(masterDF, "fcDataSets", "newsDF")
