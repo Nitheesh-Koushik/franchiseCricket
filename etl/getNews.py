@@ -48,10 +48,7 @@ def loadData(df, dataset, table):
         df, table_ref, job_config=job_config
     )
 
-    # Wait for the job to complete
     job.result()
-
-    print(f'Data loaded into BigQuery table')
     return None
 
 
