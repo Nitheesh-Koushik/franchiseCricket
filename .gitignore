@@ -1,2 +1,3 @@
 pipeline.conf
 circEnv/
+*.DS_Store
