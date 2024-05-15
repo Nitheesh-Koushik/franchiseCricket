@@ -3,12 +3,16 @@ import requests
 from google.cloud import secretmanager, bigquery
 import os 
 import pandas as pd
+import configparser
 
+
+parser = configparser.ConfigParser()
+parser.read("pipeline.conf")
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/nitheeshkoushikgattu/Downloads/franchisecricket-71cdf599679c.json"
 
 def getNewsAPIKey():
     client = secretmanager.SecretManagerServiceClient()
-    name = "projects/939576749958/secrets/newsAPI/versions/1"
+    name =  "projects/939576749958/secrets/newsAPI/versions/1"
     response = client.access_secret_version(request={"name": name})
     news_api_key = response.payload.data.decode("UTF-8")
     return news_api_key
@@ -62,5 +66,4 @@ if __name__ == "__main__":
         else:
             articles = getNewsarticles(newsAPI, league, 15)
             masterDF = pd.concat([masterDF, articles],ignore_index= True)
-    masterDF.to_csv("master.csv")
     loadData(masterDF, "fcDataSets", "newsDF")
