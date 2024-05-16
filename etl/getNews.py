@@ -5,9 +5,6 @@ import os
 import pandas as pd
 import configparser
 
-
-parser = configparser.ConfigParser()
-parser.read("pipeline.conf")
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/nitheeshkoushikgattu/Downloads/franchisecricket-71cdf599679c.json"
 
 def getNewsAPIKey():
@@ -57,10 +54,14 @@ if __name__ == "__main__":
     leagues = ["Indian Premier League", "T20 Blast UK", "Big Bash T20 Australia", 
                "Pakistan Super League", "Bangladesh Premier League", "CSA T20 Challenge",
                "Sri Lanka Premier League", "New Zealand Super Smash", "Caribbean Premier League", ]
+    parser = configparser.ConfigParser()
+    parser.read("pipeline.conf")
     for i, league in enumerate(leagues):
         if i == 0:
             masterDF = getNewsarticles(newsAPI, league, 15)
         else:
             articles = getNewsarticles(newsAPI, league, 15)
             masterDF = pd.concat([masterDF, articles],ignore_index= True)
+    dataset = parser.get("bigQueryTables", "dataset_id")
+    newsDF = parser.get("bigQueryTables", "newsTable")
     loadData(masterDF, "fcDataSets", "newsDF")
